@@ -10,4 +10,6 @@ const assuranceModel = new Schema({
 });
 
 
+
+
 export default model('Assurance', assuranceModel);
