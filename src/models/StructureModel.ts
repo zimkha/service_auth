@@ -7,9 +7,7 @@ const structureModel = new Schema({
     numberphone:{type: String},
     email:{type: String},
     isDeleted: {type: Boolean},
-    timestamp:{type: String},
-
-});
+},{timestamps: true});
 
 export default model('Structure', structureModel);
 

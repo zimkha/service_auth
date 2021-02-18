@@ -1,17 +1,17 @@
 import { model, Schema, ObjectId } from  'mongoose';
 
 const userSchema = new Schema({
-    _id : {type: String},
     firstname : {type: String},
     lastname: {type: String},
     phoneNumber: {type: String},
+    username: {type: String},
     email: {type: String},
     password: {type: String},
     address: {type: String},
     status: {type : String , enum: ['DISABLED','ACTIVED'] },
     state : { type: String, enum:['PAYED', 'NOT_PAYED']},
     tokenForSetting: {type: String},
-    role: {type : String , enum: ['SUPER_ADMIN','ADMIN','SECRETAIRE','MEDECIN,PATIENT']},
+    role: {type : String , enum: ['SUPER_ADMIN','ADMIN','SECRETAIRE','MEDECIN','PATIENT']},
     description: {type: String},
     specialite: {type: String},
     Structure: {type: Schema.Types.ObjectId, ref : 'Structure'},
