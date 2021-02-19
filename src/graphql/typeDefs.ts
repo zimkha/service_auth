@@ -17,8 +17,8 @@ export default gql`
     lastname: String
     phoneNumber:  String
     email:  String
-    username: String!
-    password: String!
+    username: String
+    password: String
     address:  String
     status: String
     state: String
@@ -93,10 +93,10 @@ export default gql`
         lastname: String
         phoneNumber:  String
         email:  String
-        password: String!
+        password: String
         address:  String
-        status: String!
-        state: String!
+        status: String
+        state: String
         tokenForSetting: String
         role: String!
         description: String
@@ -140,16 +140,16 @@ export default gql`
           registerPatient(phone: String, password: String): AuthPayload!
           googleAuthMedecin(accessToken: String!): Token!
           facebookAuth(accessToken: String!): Token!
-          updateUser(id: String, data: UserInput): User
+          updateUser(id: String, data: UserInput): Boolean!
           addAssurance(data: AssuranceInput): Assurance
           signin(username: String, password: String): AuthPayload
           signup(username: String, password: String): AuthPayload
           signUp(username: String, password: String): AuthPayload
           loginPatient(phone: String!, password: String!): Token
-
-      }
-
-
+          sendForgotPasswordEmail(email: String!): Boolean
+          sendForgotPasswordPhone(phoneNumber: String!): Boolean
+          forgotPasswordChange(newPassword: String!, key: String!): User
+       }
       schema 
       {
         query: Query
