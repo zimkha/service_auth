@@ -5,6 +5,8 @@ import nodemailer from 'nodemailer';
 import User from '../models/UserModel'
 import Assurance from '../models/AssuranceModel';
 import { ObjectId } from 'mongodb'
+import Utils from '../helper/Utils';
+import {AuthenticationError} from 'apollo-server-express'
 
 
 const saltRounds = 10 ;  
@@ -49,17 +51,36 @@ export default{
     try {  
           let all_data = JSON.parse(JSON.stringify(args));
           let toUpdate = all_data['data'];
+          console.log(toUpdate);
           let id = all_data.id;
-          toUpdate.password = bcrypt.hashSync(toUpdate.password, saltRounds);
-          let response = false;
-          let  user = await User.updateOne({
+          if(toUpdate.password){
+            toUpdate.password = bcrypt.hashSync(toUpdate.password, saltRounds);
+          }
+          if(toUpdate.phoneNumber) {
+            // Verifier si Un user avec ce meme numéro existe deja
+           const isExist = await  Utils.isExsit(id, toUpdate.phoneNumbre);
+           
+           if(isExist == true) {
+             throw new Error("A user has already registered with this phone number");  
+           } 
+          }
+         let user = await User.findOneAndUpdate({
             _id: id
-          }, {toUpdate}, { upsert: true }, (err: any, doc: any) => {
+          }, {$set: toUpdate}, { upsert: true, lean:true, omitUndefined: true, returnOriginal: false }, (err: any, doc: any) => {
+            console.log(doc);
             if(!err) {
-             response = true;
+              if(doc == null) {
+                return "Error: can not do this ";  
+              }
+              else {
+                return doc;
+              } 
+            }else {
+              //return err
+              throw new Error("Error: this user can not update");    
             }
           });
-       return response;
+       return user;
          
     } 
     catch (error) {
@@ -69,11 +90,64 @@ export default{
   
   addAssurance: async (parent: any, args: any, context: any, info: any) => {
     let data = JSON.parse(JSON.stringify(args));
-    console.log(data);
-    let item = await Assurance.create(data['data']);
-    return item;   
+    let toInsert = data['data'];
+    let response = await Utils.assuranceExiste(toInsert.numberphone, toInsert.name)
+    if(response.length > 0) {
+      let message = response[0].message
+      throw new Error(message);
+    }
+    else {
+      let item = await Assurance.create(data['data']);
+      return item; 
+    }
+    
+  },
+  updateAssurance: async(parent: any, args: any, context: any, info: any) => {
+       try {
+        let data = JSON.parse(JSON.stringify(args));
+        let id = data.id
+        let toUpdate = data['data'];
+        let response = await Utils.assuranceExiste(toUpdate.numberphone, toUpdate.namen, id);
+        console.log(response)
+        if(response.length > 0) {
+          let message = response[0].message 
+          throw new AuthenticationError(message);
+        }
+        else {
+          let assurance = await Assurance.findOneAndUpdate({_id: id},{$set: toUpdate},
+            { upsert: true, lean:true, omitUndefined: true, returnOriginal: false },
+            (err: any, doc: any) =>{
+              if(!err) {
+                 if(doc == null) {
+                  return "Error: can not do this ";  
+                 }
+                 else {
+                    return doc;
+                } 
+              }else {
+                throw new Error("Error: this user can not update");    
+              }    
+            });
+          return assurance;         
+        }
+       } catch (error) {
+         
+       }
   },
 
+  deleteAssurance: async(parent: any, args: any, context: any, info: any) => {
+    let data = JSON.parse(JSON.stringify(args)); 
+    const id = data.id;
+    let response = false;
+    // Avant de Supprimer Verifier S'il existe des docs lie a cette assurance
+     await Assurance.findOneAndDelete({_id: new ObjectId(id)}, {rawResult:true}, (err:any, doc:any) => {
+      if(err){
+        throw new Error("document not found or db failed");
+      }
+     response = true
+    })
+    return response;
+  },
   loginPatient: async (parent: any, args: any, context: any, info: any) => {
       try {
         let data = JSON.parse(JSON.stringify(args));

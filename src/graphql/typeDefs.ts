@@ -12,7 +12,7 @@ export default gql`
     }
 
   type User {
-    id: ID!
+    _id: ID!
     firstname: String
     lastname: String
     phoneNumber:  String
@@ -54,7 +54,7 @@ export default gql`
 
   type Structure {
     id: ID
-    name: String!
+    name: String
     adresse:String!
     numberphone:String!
     email:String!
@@ -64,10 +64,11 @@ export default gql`
   }
 
   type Assurance {
-    id: ID
-    adresse:String!
-    numberphone:String!
-    email:String!
+    _id: ID
+    name: String
+    adresse:String
+    numberphone:String
+    email:String
     createdAt: dateScalar
     updatedAt: dateScalar
   }
@@ -82,9 +83,10 @@ export default gql`
 
    input AssuranceInput
    {
-    adresse:String!
-    numberphone:String!
-    email:String!
+    name: String!
+    adresse: String!
+    numberphone: String!
+    email: String!
   }
        
       input UserInput
@@ -124,9 +126,9 @@ export default gql`
         getUsers: [User]
         getOneUser(id: String): User!
         getUserByRole(role: String): User
-        getAssurances(id: String): Assurance!
+        getAssurance(id: String): Assurance!
         getOneAssurance: Assurance
-        getAssuranceByAttribut(attribut: String): [Assurance]
+        getAssurances: [Assurance]
         facebookAuth(accessToken: String!): Token
         getUserByToken(token: String): Token
         getStructures: [Structure]
@@ -140,8 +142,10 @@ export default gql`
           registerPatient(phone: String, password: String): AuthPayload!
           googleAuthMedecin(accessToken: String!): Token!
           facebookAuth(accessToken: String!): Token!
-          updateUser(id: String, data: UserInput): Boolean!
+          updateUser(id: String, data: UserInput): User
           addAssurance(data: AssuranceInput): Assurance
+          updateAssurance(id: String, data:AssuranceInput): Assurance
+          deleteAssurance(id: String): Boolean!
           signin(username: String, password: String): AuthPayload
           signup(username: String, password: String): AuthPayload
           signUp(username: String, password: String): AuthPayload

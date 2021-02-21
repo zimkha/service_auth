@@ -1,6 +1,7 @@
 import { IResolverMap } from '../interfaces/IResolver';
 import errorMessages  from '../config/errorMessages'
 import User from '../models/UserModel'
+import Assurance from '../models/AssuranceModel'
 
 export default  {
   
@@ -44,6 +45,9 @@ export default  {
         }
       });
       return user;
+    },
+    async getAssurances (parent: any, args: any, context: any, info: any) {
+         return await Assurance.find();
     }
   
 

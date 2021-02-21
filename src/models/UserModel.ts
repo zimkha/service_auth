@@ -8,7 +8,7 @@ const userSchema = new Schema({
     email: {type: String},
     password: {type: String},
     address: {type: String},
-    status: {type : String , enum: ['DISABLED','ACTIVED'] },
+    status: {type : String , enum: ['DISABLED','ACTIVED'], default: "ACTIVED" },
     state : { type: String, enum:['PAYED', 'NOT_PAYED']},
     tokenForSetting: {type: String},
     role: {type : String , enum: ['SUPER_ADMIN','ADMIN','SECRETAIRE','MEDECIN','PATIENT']},
