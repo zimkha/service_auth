@@ -5,13 +5,15 @@ import helmet from 'helmet'
 import mongoose from 'mongoose';
 import typeDefs from '../graphql/typeDefs';
 import resolvers from '../graphql/resolvers';
-import { ApolloServer, AuthenticationError } from 'apollo-server-express';
+import { ApolloServer, AuthenticationError, makeExecutableSchema } from 'apollo-server-express';
+import { applyMiddleware } from "graphql-middleware";
 import getUser from '../auth/getUser';
 
 
 const env = config.get('env') as string;
 const port = config.get('PORT') as number;
 const db = config.get('MONGO_URL') as string;
+
 export function start(){
     const app: Application = express();
     try{
@@ -34,17 +36,30 @@ export function start(){
           }
         }
         connectDB();
+        
+         
+        
         const server = new ApolloServer({ 
-          typeDefs ,
-            resolvers,
-            // context: ({ req }) => {
+          // typeDefs ,
+          //   resolvers,
+          //   context: ({ req }) => {
              
-            //   const token = req.headers.authorization || '';
-            //   const user = getUser(req);
-            //   if (!user) throw new AuthenticationError('you must be logged in');
-            //   console.log(user);
-            //   return { user };
-            // }, 
+         
+          //   }, 
+          schema: applyMiddleware(
+            makeExecutableSchema({ typeDefs, resolvers })
+          ),
+          // context: ({ req }) => {
+          //   const user = req.user || null;
+          //   return { user };
+          // }
+          context: ({ req}) => {
+            // if(!headers || !headers.authorization) throw new AuthenticationError('you must be logged in');
+             const user = getUser(req);
+              if (!user) throw new AuthenticationError('you must be logged in');
+              console.log(user);
+              return { user };
+          }
           }
             );
         server.applyMiddleware({app})

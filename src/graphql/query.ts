@@ -2,12 +2,16 @@ import { IResolverMap } from '../interfaces/IResolver';
 import errorMessages  from '../config/errorMessages'
 import User from '../models/UserModel'
 import Assurance from '../models/AssuranceModel'
+import { AuthenticationError } from 'apollo-server-express';
+
 
 export default  {
   
     async getUsers(parent: any, args: any, context: any, info: any){
       try {
-       
+        // if(!context.user){
+        //   throw new AuthenticationError('you must be logged in');
+        // }
          const user = await User.find();
          if(user){
            return user;

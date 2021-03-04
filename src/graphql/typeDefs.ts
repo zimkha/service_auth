@@ -59,8 +59,8 @@ export default gql`
     numberphone:String!
     email:String!
     isDeleted: Boolean!
-    created_at: dateScalar!
-    updated_at: dateScalar!
+    createdAt: dateScalar!
+    updatedAt: dateScalar!
   }
 
   type Assurance {
@@ -114,6 +114,13 @@ export default gql`
         assurance_tpc: number
         subscriptions: Subscriber
       }
+      input StructureInput {
+        name: String!
+        adresse:String!
+        numberphone:String!
+        email:String!
+        isDeleted: Boolean!
+      }
 
       input TokenInput
       {
@@ -153,6 +160,11 @@ export default gql`
           sendForgotPasswordEmail(email: String!): Boolean
           sendForgotPasswordPhone(phoneNumber: String!): Boolean
           forgotPasswordChange(newPassword: String!, key: String!): User
+
+
+          addStructure(data: StructureInput): Structure
+          updateStructure(id: String, data: StructureInput): Structure!
+          deleteStructure(id: String): Boolean!
        }
       schema 
       {

@@ -150,6 +150,7 @@ export default{
   },
   loginPatient: async (parent: any, args: any, context: any, info: any) => {
       try {
+       
         let data = JSON.parse(JSON.stringify(args));
 
           const user = await User.findOne({phoneNumber:  data.phone});

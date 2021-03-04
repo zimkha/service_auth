@@ -33,6 +33,7 @@ const userSchema = new Schema({
     isDeleted: {type: Boolean},
     assurance: { type: Schema.Types.ObjectId, ref : 'Assurance'},
     assurance_tpc: {type: Number},
+    permissions: {type : String , enum: ['ALL','HALF_ALL','NOTHINGS']}
    
 }, {timestamps: true});
 
